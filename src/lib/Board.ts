@@ -37,8 +37,11 @@ export function createBoardStore(puzzle: Puzzle) {
     setSelectedIndex: (index: number) => {
       update((board) => setSelectedIndex(board, index));
     },
-    setValue: (value: number) => {
-      update((board) => setValue(board, value));
+    setCellValue: (value: number) => {
+      update((board) => setCellValue(board, value));
+    },
+    removeSelectedCell: () => {
+      update((board) => removeCellValue(board, board.selectedIndex));
     },
   };
 }
@@ -61,7 +64,7 @@ function setSelectedIndex(board: Board, index: number) {
   return board;
 }
 
-function setValue(board: Board, value: number) {
+function setCellValue(board: Board, value: number) {
   if (board.selectedIndex === null) {
     return board;
   }
@@ -70,6 +73,13 @@ function setValue(board: Board, value: number) {
   board.board.set(index, { ...cell, value });
   board.selectedIndex = null;
   return setSelectedIndex(board, index);
+}
+
+function removeCellValue(board: Board, index: number | null) {
+  if (!index) return;
+  const cell = board.board.get(index);
+  board.board.set(index, { ...cell, value: null });
+  return board;
 }
 
 function _resetBoardSelection(board: Board) {

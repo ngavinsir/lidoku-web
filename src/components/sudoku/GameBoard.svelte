@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { board } from "../../lib/Board";
+  import { board } from "@/lib/Board";
   import BoardCell from "./BoardCell.svelte";
-  import BottomPanel from "./BottomPanel.svelte";
+  import BottomPanel from "./BottomPanel/BottomPanel.svelte";
 </script>
 
 <div class="flex flex-col" style="width: fit-content">
