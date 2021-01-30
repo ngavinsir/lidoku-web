@@ -27,8 +27,8 @@
     'w-12 h-12 text-xl cursor-pointer border-gray-600 flex justify-center items-center',
     `${cellBorders.join(' ')}`,
     {
-      'hover:bg-white hover:bg-opacity-20': !selected,
-      'bg-opacity-30 bg-white': selected,
+      'hover:bg-gray-700': !selected,
+      'bg-gray-600': selected,
     }
   )}
 >
