@@ -11,7 +11,10 @@
 <div class={clsx(className, 'flex flex-col space-y-5')}>
   <div class="flex justify-around">
     <!-- Remove icon -->
-    <IconButton label="Remove" on:click={() => board.removeSelectedCell()}>
+    <IconButton
+      label="Remove Number"
+      on:click={() => board.removeSelectedCell()}
+    >
       <svg
         class="w-6 h-6"
         fill="none"
@@ -30,7 +33,7 @@
 
     <!-- Notes icon -->
     <IconButton
-      label="Notes"
+      label="Manual Notes"
       toggleable={true}
       on:click={() => board.toggleTakingNotes()}
     >
