@@ -40,7 +40,12 @@ export function createBoardStore(puzzle: Puzzle) {
       update((board) => setSelectedIndex(board, index));
     },
     setCellValue: (value: number) => {
-      update((board) => setCellValue(board, value));
+      update((board) => {
+        if (board.takingNotes) {
+          return toggleSelectedCellNotesValue(board, value);
+        }
+        return setCellValue(board, value);
+      });
     },
     removeSelectedCell: () => {
       update((board) => removeCellValue(board, board.selectedIndex));
@@ -73,9 +78,6 @@ function setCellValue(board: Board, value: number) {
   if (board.selectedIndex === null) {
     return board;
   }
-  if (board.takingNotes) {
-    return setCellNotesValue(board, value);
-  }
 
   const index = board.selectedIndex;
   const cell = board.board.get(index);
@@ -88,8 +90,13 @@ function setCellValue(board: Board, value: number) {
   return setSelectedIndex(board, index);
 }
 
-function setCellNotesValue(board: Board, value: number) {
+function toggleSelectedCellNotesValue(board: Board, value: number) {
   const index = board.selectedIndex;
+  if (!index) return board;
+  return toggleCellNotesValue(board, value, index);
+}
+
+function toggleCellNotesValue(board: Board, value: number, index: number) {
   const cell = board.board.get(index);
 
   if (cell.notes.has(value)) {
@@ -111,6 +118,8 @@ function removeCellValue(board: Board, index: number | null) {
   board.board.set(index, { ...cell, value: null });
   return board;
 }
+
+function generateNotes(board: Board) {}
 
 function _resetBoardSelection(board: Board) {
   for (const cell of board.board.values()) {

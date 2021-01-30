@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { index2Col, index2Row } from "@/utils/sudoku";
   import clsx from "clsx";
   export let index: number;
   export let value: number | null = null;
@@ -6,19 +7,17 @@
   export let notes: Set<number> = new Set();
 
   const cellBorders = [];
-  if (Math.floor(index / 9) === 0) {
+  if (index2Row(index) === 0) {
     cellBorders.push("border-t-3 border-t-gray-400");
   }
-  if (index % 9 === 0) {
+  if (index2Col(index) === 0) {
     cellBorders.push("border-l-3 border-l-gray-400");
   }
   cellBorders.push(
     index % 3 === 2 ? "border-r-3 border-r-gray-400" : "border-r-1"
   );
   cellBorders.push(
-    Math.floor(index / 9) % 3 === 2
-      ? "border-b-3 border-b-gray-400"
-      : "border-b-1"
+    index2Row(index) % 3 === 2 ? "border-b-3 border-b-gray-400" : "border-b-1"
   );
 
   function getNoteValue(row: number, col: number) {

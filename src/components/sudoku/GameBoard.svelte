@@ -1,5 +1,6 @@
 <script lang="ts">
   import { board } from "@/lib/Board";
+  import { rowCol2Index } from "@/utils/sudoku";
   import BoardCell from "./BoardCell.svelte";
   import BottomPanel from "./BottomPanel/BottomPanel.svelte";
 </script>
@@ -9,9 +10,9 @@
     <div class="flex" style="width: fit-content">
       {#each [...Array(9)] as _, col}
         <BoardCell
-          {...$board.board.get(row * 9 + col)}
+          {...$board.board.get(rowCol2Index(row, col))}
           on:click={() => {
-            board.setSelectedIndex(row * 9 + col);
+            board.setSelectedIndex(rowCol2Index(row, col));
           }}
         />
       {/each}
