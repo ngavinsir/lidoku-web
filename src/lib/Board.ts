@@ -16,6 +16,7 @@ export interface BoardCell {
 
 export interface Board {
   board: Map<number, BoardCell>;
+  notes: Map<number, number[]>;
   selectedIndex: number | null;
   takingNotes: boolean;
 }

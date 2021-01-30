@@ -29,7 +29,7 @@
     </IconButton>
 
     <!-- Notes icon -->
-    <IconButton label="Notes">
+    <IconButton label="Notes" toggleable={true}>
       <svg
         class="w-6 h-6"
         fill="none"
