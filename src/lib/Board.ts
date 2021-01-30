@@ -12,11 +12,11 @@ export interface BoardCell {
   value: number | null;
   status: BoardCellStatus;
   selected: boolean;
+  notes: Set<number>;
 }
 
 export interface Board {
   board: Map<number, BoardCell>;
-  notes: Map<number, number[]>;
   selectedIndex: number | null;
   takingNotes: boolean;
 }
@@ -45,6 +45,9 @@ export function createBoardStore(puzzle: Puzzle) {
     removeSelectedCell: () => {
       update((board) => removeCellValue(board, board.selectedIndex));
     },
+    toggleTakingNotes: () => {
+      update((board) => <Board>{ ...board, takingNotes: !board.takingNotes });
+    },
   };
 }
 
@@ -70,11 +73,32 @@ function setCellValue(board: Board, value: number) {
   if (board.selectedIndex === null) {
     return board;
   }
+  if (board.takingNotes) {
+    return setCellNotesValue(board, value);
+  }
+
   const index = board.selectedIndex;
   const cell = board.board.get(index);
+
+  // can't change generated cell value
+  if (cell.status === BoardCellStatus.GENERATED) return board;
+
   board.board.set(index, { ...cell, value });
   board.selectedIndex = null;
   return setSelectedIndex(board, index);
+}
+
+function setCellNotesValue(board: Board, value: number) {
+  const index = board.selectedIndex;
+  const cell = board.board.get(index);
+
+  if (cell.notes.has(value)) {
+    cell.notes.delete(value);
+  } else {
+    cell.notes.add(value);
+  }
+
+  return board;
 }
 
 function removeCellValue(board: Board, index: number | null) {
@@ -102,6 +126,7 @@ function puzzle2Board(puzzle: Puzzle): Board {
       value: puzzle[index],
       status: puzzle[index] ? BoardCellStatus.GENERATED : BoardCellStatus.IDLE,
       selected: false,
+      notes: new Set(),
     });
   }
   return <Board>{

@@ -3,6 +3,7 @@
   export let index: number;
   export let value: number | null = null;
   export let selected = false;
+  export let notes: Set<number> = new Set();
 
   const cellBorders = [];
   if (Math.floor(index / 9) === 0) {
@@ -19,12 +20,16 @@
       ? "border-b-3 border-b-gray-400"
       : "border-b-1"
   );
+
+  function getNoteValue(row: number, col: number) {
+    return row * 3 + col + 1;
+  }
 </script>
 
 <div
   on:click
   class={clsx(
-    'w-12 h-12 text-xl cursor-pointer border-gray-600 flex justify-center items-center',
+    'w-14 h-14 text-xl cursor-pointer border-gray-600 flex justify-center items-center',
     `${cellBorders.join(' ')}`,
     {
       'hover:bg-gray-700': !selected,
@@ -33,4 +38,23 @@
   )}
 >
   {value ? value : ''}
+
+  <!-- Notes -->
+  {#if !value}
+    <div class="w-full h-full p-1 flex flex-col justify-around">
+      {#each [...Array(3)] as _, row}
+        <div class="flex justify-around">
+          {#each [...Array(3)] as _, col}
+            <span
+              class={clsx('text-xs text-gray-400', {
+                invisible: !notes.has(getNoteValue(row, col)),
+              })}
+            >
+              {getNoteValue(row, col)}
+            </span>
+          {/each}
+        </div>
+      {/each}
+    </div>
+  {/if}
 </div>

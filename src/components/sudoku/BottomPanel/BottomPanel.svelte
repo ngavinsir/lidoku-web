@@ -29,7 +29,11 @@
     </IconButton>
 
     <!-- Notes icon -->
-    <IconButton label="Notes" toggleable={true}>
+    <IconButton
+      label="Notes"
+      toggleable={true}
+      on:click={() => board.toggleTakingNotes()}
+    >
       <svg
         class="w-6 h-6"
         fill="none"
