@@ -11,7 +11,7 @@
 
 <div
   class={clsx(
-    'flex flex-col items-center justify-center p-3 space-y-2 cursor-pointer hover:bg-gray-700',
+    'flex flex-col items-center justify-center w-24 h-24 space-y-2 cursor-pointer hover:bg-gray-700',
     {
       'bg-gray-700': toggled,
     }
@@ -22,5 +22,8 @@
   }}
 >
   <slot />
-  <span class="text-base select-none">{label}</span>
+  <span
+    class="text-sm select-none text-center leading-none"
+    style="max-width: 10ch"
+  >{label}</span>
 </div>

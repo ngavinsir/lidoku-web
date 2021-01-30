@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import { index2Col, index2Row, index2Square } from "@/utils/sudoku";
 
 export enum BoardCellStatus {
   WRONG,
@@ -52,6 +53,9 @@ export function createBoardStore(puzzle: Puzzle) {
     },
     toggleTakingNotes: () => {
       update((board) => <Board>{ ...board, takingNotes: !board.takingNotes });
+    },
+    generateNotes: () => {
+      update((board) => generateNotes(board));
     },
   };
 }
@@ -119,7 +123,20 @@ function removeCellValue(board: Board, index: number | null) {
   return board;
 }
 
-function generateNotes(board: Board) {}
+function generateNotes(board: Board) {
+  for (const [cellIndex, cell] of [...board.board.entries()]) {
+    if (cell.value) continue;
+    for (const i of [...Array(9)].keys()) {
+      const noteValue = i + 1;
+      if (possibleInCell(board, noteValue, cellIndex)) {
+        cell.notes.add(noteValue);
+      } else {
+        cell.notes.delete(noteValue);
+      }
+    }
+  }
+  return board;
+}
 
 function _resetBoardSelection(board: Board) {
   for (const cell of board.board.values()) {
@@ -143,4 +160,45 @@ function puzzle2Board(puzzle: Puzzle): Board {
     selectedIndex: null,
     takingNotes: false,
   };
+}
+
+function possibleInCell(board: Board, value: number, index: number) {
+  const fs = [possibleInRow, possibleInCol, possibleInSquare];
+  for (const f of fs) {
+    if (!f(board, value, index)) return false;
+  }
+  return true;
+}
+
+function possibleInRow(board: Board, value: number, index: number) {
+  const row = index2Row(index);
+  const cellsInRow = [...board.board]
+    .filter(([cellIndex, _]) => index2Row(cellIndex) === row)
+    .map(([_, cell]) => cell);
+  for (const cell of cellsInRow) {
+    if (cell.value === value) return false;
+  }
+  return true;
+}
+
+function possibleInCol(board: Board, value: number, index: number) {
+  const col = index2Col(index);
+  const cellsInCol = [...board.board]
+    .filter(([cellIndex, _]) => index2Col(cellIndex) === col)
+    .map(([_, cell]) => cell);
+  for (const cell of cellsInCol) {
+    if (cell.value === value) return false;
+  }
+  return true;
+}
+
+function possibleInSquare(board: Board, value: number, index: number) {
+  const square = index2Square(index);
+  const cellsInSquare = [...board.board]
+    .filter(([cellIndex, _]) => index2Square(cellIndex) === square)
+    .map(([_, cell]) => cell);
+  for (const cell of cellsInSquare) {
+    if (cell.value === value) return false;
+  }
+  return true;
 }
