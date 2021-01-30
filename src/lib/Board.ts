@@ -17,6 +17,7 @@ export interface BoardCell {
 export interface Board {
   board: Map<number, BoardCell>;
   selectedIndex: number | null;
+  takingNotes: boolean;
 }
 
 export type Puzzle = number[];
@@ -31,7 +32,7 @@ export const board = createBoardStore([
 
 export function createBoardStore(puzzle: Puzzle) {
   const board = puzzle2Board(puzzle);
-  const { subscribe, set, update } = writable(board);
+  const { subscribe, update } = writable(board);
   return {
     subscribe,
     setSelectedIndex: (index: number) => {
@@ -78,6 +79,10 @@ function setCellValue(board: Board, value: number) {
 function removeCellValue(board: Board, index: number | null) {
   if (!index) return;
   const cell = board.board.get(index);
+
+  // can't remove generated cell value
+  if (cell.status === BoardCellStatus.GENERATED) return;
+
   board.board.set(index, { ...cell, value: null });
   return board;
 }
@@ -101,5 +106,6 @@ function puzzle2Board(puzzle: Puzzle): Board {
   return <Board>{
     board,
     selectedIndex: null,
+    takingNotes: false,
   };
 }
