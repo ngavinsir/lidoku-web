@@ -96,7 +96,7 @@ function setCellValue(board: Board, value: number, index: number) {
 
 function toggleSelectedCellNotesValue(board: Board, value: number) {
   const index = board.selectedIndex;
-  if (!index) return board;
+  if (index === null) return board;
   return toggleCellNotesValue(board, value, index);
 }
 
