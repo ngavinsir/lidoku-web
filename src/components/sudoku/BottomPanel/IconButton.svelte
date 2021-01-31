@@ -1,4 +1,5 @@
 <script lang="ts">
+  import WindowSize from "@/components/utils/WindowSize.svelte";
   import clsx from "clsx";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
@@ -7,13 +8,19 @@
   export let toggleable: boolean = false;
 
   let toggled = false;
+  let screenWidth = 0;
 </script>
+
+<WindowSize bind:width={screenWidth} />
 
 <div
   class={clsx(
-    'flex flex-col items-center justify-center w-24 h-24 space-y-2 cursor-pointer hover:bg-gray-700',
+    'flex flex-col items-center justify-center space-y-2 cursor-pointer hover:bg-gray-700',
     {
       'bg-gray-700': toggled,
+      'w-24 h-24': screenWidth > 400,
+      'w-20 h-20': screenWidth <= 400 && screenWidth >= 375,
+      'w-16 h-16': screenWidth < 375,
     }
   )}
   on:click={(event) => {

@@ -11,7 +11,7 @@
     'Enter a string of 81 numbers (you can express blanks as 0, *, " ", _ or .)';
 </script>
 
-<div class={clsx(className, 'flex flex-col space-y-5')}>
+<div class={clsx(className, 'flex flex-col space-y-10 sm:space-y-5')}>
   <div class="flex justify-around">
     <!-- Remove icon -->
     <IconButton

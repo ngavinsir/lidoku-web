@@ -6,6 +6,6 @@
 
 <Tailwindcss />
 <!-- <ModeSwitcher /> -->
-<main class="p-4 mx-auto" style="width: fit-content">
+<main class="px-1 sm:px-4 py-4 mx-auto" style="width: fit-content">
   <GameBoard />
 </main>

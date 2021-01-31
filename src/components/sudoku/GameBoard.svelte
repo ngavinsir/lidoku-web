@@ -19,7 +19,7 @@
 
 <div class="flex flex-col" style="width: fit-content">
   {#each [...Array(9)] as _, row}
-    <div class="flex" style="width: fit-content">
+    <div class="flex mx-auto" style="width: fit-content">
       {#each [...Array(9)] as _, col}
         <BoardCell
           {...$board.board.get(rowCol2Index(row, col))}
