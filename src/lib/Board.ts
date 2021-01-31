@@ -113,7 +113,7 @@ function toggleCellNotesValue(board: Board, value: number, index: number) {
 }
 
 function removeCellValue(board: Board, index: number | null) {
-  if (!index) return;
+  if (index === null) return;
   const cell = board.board.get(index);
 
   // can't remove generated cell value

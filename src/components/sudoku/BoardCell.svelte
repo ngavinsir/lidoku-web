@@ -32,7 +32,7 @@
 <div
   on:click
   class={clsx(
-    'w-14 h-14 text-xl cursor-pointer border-gray-600 flex justify-center items-center',
+    'w-14 h-14 text-xl cursor-pointer border-gray-600 flex justify-center items-center select-none',
     `${cellBorders.join(' ')}`,
     {
       'hover:bg-gray-700': !selected,
@@ -52,7 +52,7 @@
         <div class="flex justify-around">
           {#each [...Array(3)] as _, col}
             <span
-              class={clsx('text-xs text-gray-400', {
+              class={clsx('text-xs text-gray-400 select-none', {
                 invisible: !notes.has(getNoteValue(row, col)),
               })}
             >
