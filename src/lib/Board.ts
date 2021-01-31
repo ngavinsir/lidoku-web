@@ -35,9 +35,10 @@ export const board = createBoardStore(
 
 export function createBoardStore(puzzle: Puzzle) {
   const board = puzzle2Board(puzzle);
-  const { subscribe, update } = writable(board);
+  const { subscribe, set, update } = writable(board);
   return {
     subscribe,
+    initPuzzle: (puzzle: Puzzle) => set(puzzle2Board(puzzle)),
     setSelectedIndex: (index: number) => {
       update((board) => setSelectedIndex(board, index));
     },
@@ -154,16 +155,18 @@ function puzzle2Board(puzzle: Puzzle): Board {
       return parseInt(char);
     }
   });
-  for (let index = 0; index < 81; index++) {
-    board.set(index, <BoardCell>{
-      index,
-      value: puzzleList[index],
-      status: puzzleList[index]
-        ? BoardCellStatus.GENERATED
-        : BoardCellStatus.IDLE,
-      selected: false,
-      notes: new Set(),
-    });
+  if (puzzleList.length === 81) {
+    for (let index = 0; index < 81; index++) {
+      board.set(index, <BoardCell>{
+        index,
+        value: puzzleList[index],
+        status: puzzleList[index]
+          ? BoardCellStatus.GENERATED
+          : BoardCellStatus.IDLE,
+        selected: false,
+        notes: new Set(),
+      });
+    }
   }
   return <Board>{
     board,
