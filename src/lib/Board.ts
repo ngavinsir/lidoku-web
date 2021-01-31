@@ -22,15 +22,16 @@ export interface Board {
   takingNotes: boolean;
 }
 
-export type Puzzle = number[];
+export type Puzzle = string;
 
 // prettier-ignore
-export const board = createBoardStore([
-  8, 0, 3, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 7, 0, 3, 0, 0, 2, 4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  8, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4, 9, 7, 0, 0, 1, 0, 8, 0, 0, 0, 1, 0, 0, 0, 0,
-  0, 0, 0
-]);
+export const board = createBoardStore(
+  // 8, 0, 3, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0,
+  // 0, 0, 0, 0, 0, 7, 0, 3, 0, 0, 2, 4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  // 8, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4, 9, 7, 0, 0, 1, 0, 8, 0, 0, 0, 1, 0, 0, 0, 0,
+  // 0, 0, 0
+  ".9....85....2..91..2.1.8.....1...534..36.......7.1....3.......9...9.7..68.....7.."
+);
 
 export function createBoardStore(puzzle: Puzzle) {
   const board = puzzle2Board(puzzle);
@@ -146,11 +147,20 @@ function _resetBoardSelection(board: Board) {
 
 function puzzle2Board(puzzle: Puzzle): Board {
   const board = new Map<number, BoardCell>();
+  const puzzleList = puzzle.split("").map((char) => {
+    if ([" ", ".", "0", "*", "_"].includes(char)) {
+      return 0;
+    } else {
+      return parseInt(char);
+    }
+  });
   for (let index = 0; index < 81; index++) {
     board.set(index, <BoardCell>{
       index,
-      value: puzzle[index],
-      status: puzzle[index] ? BoardCellStatus.GENERATED : BoardCellStatus.IDLE,
+      value: puzzleList[index],
+      status: puzzleList[index]
+        ? BoardCellStatus.GENERATED
+        : BoardCellStatus.IDLE,
       selected: false,
       notes: new Set(),
     });
