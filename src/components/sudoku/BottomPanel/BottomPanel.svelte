@@ -145,7 +145,7 @@
 
   <NumberSelector
     on:select-number={(event) => {
-      board.setCellValue(event.detail);
+      board.setSelectedCellValue(event.detail);
     }}
   />
 </div>

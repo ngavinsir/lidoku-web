@@ -13,6 +13,7 @@ export interface BoardCell {
   value: number | null;
   status: BoardCellStatus;
   selected: boolean;
+  sameAsSelected: boolean;
   notes: Set<number>;
 }
 
@@ -42,12 +43,12 @@ export function createBoardStore(puzzle: Puzzle) {
     setSelectedIndex: (index: number) => {
       update((board) => setSelectedIndex(board, index));
     },
-    setCellValue: (value: number) => {
+    setSelectedCellValue: (value: number) => {
       update((board) => {
         if (board.takingNotes) {
           return toggleSelectedCellNotesValue(board, value);
         }
-        return setCellValue(board, value);
+        return setCellValue(board, value, board.selectedIndex);
       });
     },
     removeSelectedCell: () => {
@@ -68,8 +69,12 @@ function setSelectedIndex(board: Board, index: number) {
     board.selectedIndex = null;
   } else {
     for (const cell of board.board.values()) {
-      if (cell.value && cell.value === board.board.get(index).value) {
-        cell.selected = true;
+      if (
+        cell.index !== index &&
+        cell.value &&
+        cell.value === board.board.get(index).value
+      ) {
+        cell.sameAsSelected = true;
       }
       if (cell.index === index) {
         cell.selected = true;
@@ -80,20 +85,13 @@ function setSelectedIndex(board: Board, index: number) {
   return board;
 }
 
-function setCellValue(board: Board, value: number) {
-  if (board.selectedIndex === null) {
-    return board;
-  }
-
-  const index = board.selectedIndex;
+function setCellValue(board: Board, value: number, index: number) {
   const cell = board.board.get(index);
 
   // can't change generated cell value
   if (cell.status === BoardCellStatus.GENERATED) return board;
 
-  board.board.set(index, { ...cell, value });
-  board.selectedIndex = null;
-  return setSelectedIndex(board, index);
+  return _updateCellValue(board, cell, index, value);
 }
 
 function toggleSelectedCellNotesValue(board: Board, value: number) {
@@ -121,8 +119,7 @@ function removeCellValue(board: Board, index: number | null) {
   // can't remove generated cell value
   if (cell.status === BoardCellStatus.GENERATED) return;
 
-  board.board.set(index, { ...cell, value: null });
-  return board;
+  return _updateCellValue(board, cell, index, null);
 }
 
 function generateNotes(board: Board) {
@@ -140,10 +137,36 @@ function generateNotes(board: Board) {
   return board;
 }
 
+function checkCellStatus(board: Board) {
+  for (const [cellIndex, cell] of [...board.board.entries()]) {
+    if (cell.status === BoardCellStatus.GENERATED) continue;
+    if (cell.value === null) continue;
+    if (!possibleInCell(board, cell.value, cellIndex)) {
+      cell.status = BoardCellStatus.WRONG;
+    } else {
+      cell.status = BoardCellStatus.CORRECT;
+    }
+  }
+  return board;
+}
+
 function _resetBoardSelection(board: Board) {
   for (const cell of board.board.values()) {
     cell.selected = false;
+    cell.sameAsSelected = false;
   }
+}
+
+function _updateCellValue(
+  board: Board,
+  cell: BoardCell,
+  index: number,
+  value: number | null
+) {
+  board.board.set(index, { ...cell, value });
+  board.selectedIndex = null;
+  checkCellStatus(board);
+  return setSelectedIndex(board, index);
 }
 
 function puzzle2Board(puzzle: Puzzle): Board {
@@ -186,7 +209,9 @@ function possibleInCell(board: Board, value: number, index: number) {
 function possibleInRow(board: Board, value: number, index: number) {
   const row = index2Row(index);
   const cellsInRow = [...board.board]
-    .filter(([cellIndex, _]) => index2Row(cellIndex) === row)
+    .filter(
+      ([cellIndex, _]) => index2Row(cellIndex) === row && cellIndex !== index
+    )
     .map(([_, cell]) => cell);
   for (const cell of cellsInRow) {
     if (cell.value === value) return false;
@@ -197,7 +222,9 @@ function possibleInRow(board: Board, value: number, index: number) {
 function possibleInCol(board: Board, value: number, index: number) {
   const col = index2Col(index);
   const cellsInCol = [...board.board]
-    .filter(([cellIndex, _]) => index2Col(cellIndex) === col)
+    .filter(
+      ([cellIndex, _]) => index2Col(cellIndex) === col && cellIndex !== index
+    )
     .map(([_, cell]) => cell);
   for (const cell of cellsInCol) {
     if (cell.value === value) return false;
@@ -208,7 +235,10 @@ function possibleInCol(board: Board, value: number, index: number) {
 function possibleInSquare(board: Board, value: number, index: number) {
   const square = index2Square(index);
   const cellsInSquare = [...board.board]
-    .filter(([cellIndex, _]) => index2Square(cellIndex) === square)
+    .filter(
+      ([cellIndex, _]) =>
+        index2Square(cellIndex) === square && cellIndex !== index
+    )
     .map(([_, cell]) => cell);
   for (const cell of cellsInSquare) {
     if (cell.value === value) return false;

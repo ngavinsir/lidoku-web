@@ -5,7 +5,7 @@
 </script>
 
 <Tailwindcss />
-<ModeSwitcher />
+<!-- <ModeSwitcher /> -->
 <main class="p-4 mx-auto" style="width: fit-content">
   <GameBoard />
 </main>

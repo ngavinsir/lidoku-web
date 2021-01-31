@@ -1,9 +1,13 @@
 <script lang="ts">
   import { index2Col, index2Row } from "@/utils/sudoku";
+  import { BoardCellStatus } from "@/lib/Board";
   import clsx from "clsx";
+
   export let index: number;
   export let value: number | null = null;
+  export let status: BoardCellStatus = BoardCellStatus.WRONG;
   export let selected = false;
+  export let sameAsSelected = false;
   export let notes: Set<number> = new Set();
 
   const cellBorders = [];
@@ -32,7 +36,10 @@
     `${cellBorders.join(' ')}`,
     {
       'hover:bg-gray-700': !selected,
-      'bg-gray-600': selected,
+      'bg-gray-500': selected,
+      'bg-gray-700': sameAsSelected,
+      'text-red-400': status === BoardCellStatus.WRONG,
+      'text-blue-300': status === BoardCellStatus.CORRECT,
     }
   )}
 >
