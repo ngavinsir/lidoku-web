@@ -1,6 +1,8 @@
 <script>
   import WindowSize from "@/components/utils/WindowSize.svelte";
   import clsx from "clsx";
+  import { board } from "@/lib/Board";
+
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
@@ -19,9 +21,14 @@
           'w-12 h-12': screenWidth >= 450,
           'w-10 h-10': screenWidth < 450 && screenWidth >= 375,
           'w-8 h-8': screenWidth < 375,
+          invisible:
+            !$board.takingNotes && $board.numberCountMap.get(num + 1) === 9,
         }
       )}
-      on:click={() => dispatch('select-number', num + 1)}
+      on:click={() => {
+        if (!$board.takingNotes && $board.numberCountMap.get(num + 1) === 9) return;
+        dispatch('select-number', num + 1);
+      }}
     >
       {num + 1}
     </div>

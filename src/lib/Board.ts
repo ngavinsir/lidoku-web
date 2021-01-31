@@ -21,9 +21,22 @@ export interface Board {
   board: Map<number, BoardCell>;
   selectedIndex: number | null;
   takingNotes: boolean;
+  numberCountMap: Map<number, number>;
 }
 
 export type Puzzle = string;
+
+const initNumberCountMap: Map<number, number> = new Map([
+  [1, 0],
+  [2, 0],
+  [3, 0],
+  [4, 0],
+  [5, 0],
+  [6, 0],
+  [7, 0],
+  [8, 0],
+  [9, 0],
+]);
 
 // prettier-ignore
 export const board = createBoardStore(
@@ -138,15 +151,22 @@ function generateNotes(board: Board) {
 }
 
 function checkCellStatus(board: Board) {
+  const numberCountMap = new Map(initNumberCountMap);
   for (const [cellIndex, cell] of [...board.board.entries()]) {
-    if (cell.status === BoardCellStatus.GENERATED) continue;
+    const numberCount = numberCountMap.get(cell.value);
+    if (cell.status === BoardCellStatus.GENERATED) {
+      numberCountMap.set(cell.value, numberCount + 1);
+      continue;
+    }
     if (cell.value === null) continue;
     if (!possibleInCell(board, cell.value, cellIndex)) {
       cell.status = BoardCellStatus.WRONG;
     } else {
       cell.status = BoardCellStatus.CORRECT;
+      numberCountMap.set(cell.value, numberCount + 1);
     }
   }
+  board.numberCountMap = numberCountMap;
   return board;
 }
 
@@ -173,19 +193,23 @@ function puzzle2Board(puzzle: Puzzle): Board {
   const board = new Map<number, BoardCell>();
   const puzzleList = puzzle.split("").map((char) => {
     if ([" ", ".", "0", "*", "_"].includes(char)) {
-      return 0;
+      return null;
     } else {
       return parseInt(char);
     }
   });
+  const numberCountMap = new Map(initNumberCountMap);
   if (puzzleList.length === 81) {
     for (let index = 0; index < 81; index++) {
+      const value = puzzleList[index];
+      if (value) {
+        const numberCount = numberCountMap.get(value);
+        numberCountMap.set(value, numberCount + 1);
+      }
       board.set(index, <BoardCell>{
         index,
-        value: puzzleList[index],
-        status: puzzleList[index]
-          ? BoardCellStatus.GENERATED
-          : BoardCellStatus.IDLE,
+        value,
+        status: value ? BoardCellStatus.GENERATED : BoardCellStatus.IDLE,
         selected: false,
         notes: new Set(),
       });
@@ -195,6 +219,7 @@ function puzzle2Board(puzzle: Puzzle): Board {
     board,
     selectedIndex: null,
     takingNotes: false,
+    numberCountMap: numberCountMap,
   };
 }
 
