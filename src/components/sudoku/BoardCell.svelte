@@ -69,7 +69,7 @@
     'justify-center items-center select-none',
     `${cellBorders.join(' ')}`,
     {
-      'hover:bg-gray-700': !selected,
+      'can-hover:hover:bg-gray-700': !selected,
       'bg-gray-500': selected,
       'bg-gray-700': sameAsSelected,
       'text-red-400': status === BoardCellStatus.WRONG,

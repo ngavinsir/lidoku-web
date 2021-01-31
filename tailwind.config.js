@@ -12,6 +12,9 @@ module.exports = {
         1: "1px",
         3: "3px",
       },
+      screens: {
+        "can-hover": { raw: "(hover: hover)" },
+      },
     },
   },
   variants: {},

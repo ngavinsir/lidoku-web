@@ -14,7 +14,7 @@
     <div
       class={clsx(
         'text-xl cursor-pointer flex justify-center items-center',
-        'hover:bg-gray-700 select-none',
+        'can-hover:hover:bg-gray-700 select-none',
         {
           'w-12 h-12': screenWidth >= 450,
           'w-10 h-10': screenWidth < 450 && screenWidth >= 375,

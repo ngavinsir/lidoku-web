@@ -15,7 +15,7 @@
 
 <div
   class={clsx(
-    'flex flex-col items-center justify-center space-y-2 cursor-pointer hover:bg-gray-700',
+    'flex flex-col items-center justify-center space-y-2 cursor-pointer can-hover:hover:bg-gray-700',
     {
       'bg-gray-700': toggled,
       'w-24 h-24': screenWidth > 400,
